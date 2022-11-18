@@ -6,8 +6,9 @@ import pandas as pd
 import pynwb
 import pytest
 
-from allensdk.brain_observatory.behavior.data_files import StimulusFile, \
-    SyncFile
+from allensdk.brain_observatory.behavior.data_files import (
+    BehaviorStimulusFile,
+    SyncFile)
 from allensdk.brain_observatory.behavior.data_objects import StimulusTimestamps
 from allensdk.brain_observatory.behavior.data_objects.licks import Licks
 from allensdk.brain_observatory.behavior.data_objects.metadata\
@@ -23,7 +24,7 @@ from allensdk.test.brain_observatory.behavior.data_objects.lims_util import \
     LimsTest
 
 
-class TestFromStimulusFile(LimsTest):
+class TestFromBehaviorStimulusFile(LimsTest):
     @classmethod
     def setup_class(cls):
         cls.behavior_session_id = 994174745
@@ -32,6 +33,12 @@ class TestFromStimulusFile(LimsTest):
         dir = Path(__file__).parent.resolve()
         test_data_dir = dir / 'test_data'
 
+        # Note: trials.pkl must be created from a BehaviorSession,
+        # not a BehaviorOphysExperiment. If it is created from
+        # a BehaviorOphysExperiment, the stimulus timestamps will be
+        # instantiated from a sync file, rather than a stimulus file.
+        # The tests expect stimulus_timestamps to be instantiated
+        # from a stimulus file.
         expected = pd.read_pickle(str(test_data_dir / 'trials.pkl'))
         cls.expected = TrialTable(trials=expected)
 
@@ -39,49 +46,49 @@ class TestFromStimulusFile(LimsTest):
     def test_from_stimulus_file(self):
         stimulus_file, stimulus_timestamps, licks, rewards = \
             self._get_trial_table_data()
-        sync_file = SyncFile.from_lims(
-            db=self.dbconn, ophys_experiment_id=self.ophys_experiment_id)
-        equipment = Equipment.from_lims(
-            behavior_session_id=self.behavior_session_id, lims_db=self.dbconn)
-        monitor_delay = calculate_monitor_delay(sync_file=sync_file,
-                                                equipment=equipment)
+
         trials = TrialTable.from_stimulus_file(
             stimulus_file=stimulus_file,
             stimulus_timestamps=stimulus_timestamps,
             licks=licks,
-            rewards=rewards,
-            monitor_delay=monitor_delay
+            rewards=rewards
         )
         assert trials == self.expected
 
     def test_from_stimulus_file2(self):
         dir = Path(__file__).parent.parent.resolve()
         stimulus_filepath = dir / 'resources' / 'example_stimulus.pkl.gz'
-        stimulus_file = StimulusFile(filepath=stimulus_filepath)
+        stimulus_file = BehaviorStimulusFile(filepath=stimulus_filepath)
         stimulus_file, stimulus_timestamps, licks, rewards = \
             self._get_trial_table_data(stimulus_file=stimulus_file)
         TrialTable.from_stimulus_file(
             stimulus_file=stimulus_file,
             stimulus_timestamps=stimulus_timestamps,
-            monitor_delay=0.02115,
             licks=licks,
             rewards=rewards
         )
 
-    def _get_trial_table_data(self,
-                              stimulus_file: Optional[StimulusFile] = None):
+    def _get_trial_table_data(
+            self,
+            stimulus_file: Optional[BehaviorStimulusFile] = None):
         """returns data required to instantiate a TrialTable"""
         if stimulus_file is None:
-            stimulus_file = StimulusFile.from_lims(
+            stimulus_file = BehaviorStimulusFile.from_lims(
                 behavior_session_id=self.behavior_session_id, db=self.dbconn)
         stimulus_timestamps = StimulusTimestamps.from_stimulus_file(
-            stimulus_file=stimulus_file)
+            stimulus_file=stimulus_file,
+            monitor_delay=0.02115)
+
+        stimulus_timestamps_no_delay = StimulusTimestamps.from_stimulus_file(
+            stimulus_file=stimulus_file,
+            monitor_delay=0.0)
+
         licks = Licks.from_stimulus_file(
             stimulus_file=stimulus_file,
-            stimulus_timestamps=stimulus_timestamps)
+            stimulus_timestamps=stimulus_timestamps_no_delay)
         rewards = Rewards.from_stimulus_file(
             stimulus_file=stimulus_file,
-            stimulus_timestamps=stimulus_timestamps)
+            stimulus_timestamps=stimulus_timestamps_no_delay)
         return stimulus_file, stimulus_timestamps, licks, rewards
 
 
@@ -105,8 +112,9 @@ class TestMonitorDelay:
         self.sync_file = SyncFile(filepath=str(test_data_dir / 'sync.h5'))
         self.trials = TrialTable(trials=trials)
 
-    def test_monitor_delay(self, monkeypatch):
-        equipment = Equipment(equipment_name='CAM2P.1')
+    @pytest.mark.parametrize('equipment_name', ('CAMP2.1', 'MESO.2'))
+    def test_monitor_delay(self, monkeypatch, equipment_name):
+        equipment = Equipment(equipment_name=equipment_name)
 
         def dummy_delay(self):
             return 1.12

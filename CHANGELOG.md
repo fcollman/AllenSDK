@@ -1,6 +1,28 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.13.6] = 2022-08-04
+- bugfix when accessing stimulus presentations table for vcn data
+- updates vbn notebooks
+- 
+## [2.13.5] = 2022-07-27
+- Add support for visual behavior neuropixels data
+- 
+## [2.13.4] = 2022-02-23
+- Bug fix in ecephys
+- Added support for VBN source density jobs.
+- Bug fix for pg8000
+
+## [2.13.3] = 2022-02-02
+- Add ability to extract running speed from mulit-stimulus experiments
+- Compatible with pandas 1.4
+
+## [2.13.2] = 2022-01-03
+- Fixes bug that caused file paths on windows machines to be incorrect in Visual behavior user-facing classes
+- Updates to support MESO.2
+- Loosens/updates required versions for several dependencies
+- Updates in order to generate valid NWB files for Neuropixels Visual Coding data collected between 2019 and 2021
+
 ## [2.13.1] = 2021-10-04
 - Fixes bug that was preventing the BehaviorSession from properly instantiating passive sessions.
 

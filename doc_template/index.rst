@@ -52,20 +52,20 @@ image change detection task.
      - Initial Release
    * - Passive
      - Optical physiology
-     - `Visual Coding - Optical Physiology <https://allensdk.readthedocs.io/en/latest/brain_observatory.html>`_
+     - :doc:`Visual Coding - Optical Physiology <brain_observatory>`
      - June 2016
    * - Passive
      - Extracellular electrophysiology
-     - `Visual Coding - Neuropixels <https://allensdk.readthedocs.io/en/latest/visual_coding_neuropixels.html>`_
+     - :doc:`Visual Coding - Neuropixels <visual_coding_neuropixels>`
      - October 2019
    * - Active
      - Optical physiology
-     - `Visual Behavior - Optical Physiology <https://allensdk.readthedocs.io/en/latest/visual_behavior_optical_physiology.html>`_
+     - :doc:`Visual Behavior - Optical Physiology <visual_behavior_optical_physiology>`
      - March 2021
    * - Active
      - Extracellular electrophysiology
-     - Visual Behavior - Neuropixels
-     - Coming soon...
+     - :doc:`Visual Behavior - Neuropixels <visual_behavior_neuropixels>`
+     - July 2022
  
 Experiment and stimulus data are provided in `Neurodata Without Borders <https://www.nwb.org/>`_ (NWB) files. 
 The AllenSDK provides code to:
@@ -117,6 +117,34 @@ The `Allen Mouse Brain Connectivity Atlas <http://connectivity.brain-map.org>`_ 
 The Allen SDK provides Python code for accessing experimental metadata along with projection signal volumes registered to a common coordinate framework.  This framework has structural annotations, which allows users to compute structure-level signal statistics.
 
 See the `mouse connectivity section <connectivity.html>`_ for more details.
+
+
+What's new - 2.13.6
+----------------------------------------------------------------------
+- bugfix when accessing stimulus presentations table for vcn data
+- updates vbn notebooks
+
+What's new - 2.13.5
+----------------------------------------------------------------------
+- Support for visual behavior neuropixels data
+
+What's new - 2.13.4
+----------------------------------------------------------------------
+- Bug fix in ecephys
+- Added support for VBN source density jobs.
+- Bug fix for pg8000
+
+What's new - 2.13.3
+----------------------------------------------------------------------
+- Add ability to extract running speed from mulit-stimulus experiments
+- Compatible with pandas 1.4
+
+What's New - 2.13.2
+-----------------------------------------------------------------------
+- Fixes bug that caused file paths on windows machines to be incorrect in Visual behavior user-facing classes
+- Updates to support MESO.2
+- Loosens/updates required versions for several dependencies
+- Updates in order to generate valid NWB files for Neuropixels Visual Coding data collected between 2019 and 2021
 
 What's New - 2.13.1
 -----------------------------------------------------------------------

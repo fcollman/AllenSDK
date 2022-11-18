@@ -9,12 +9,17 @@ from ._interpolation_utils import regular_grid_extractor_factory
 
 
 def extract_trial_windows(
-    stimulus_table: pd.DataFrame, stimulus_name: str,
-    time_step: float, pre_stimulus_time: float, post_stimulus_time: float,
+    stimulus_table: pd.DataFrame,
+    stimulus_name: str,
+    time_step: float,
+    pre_stimulus_time: float,
+    post_stimulus_time: float,
     num_trials: Optional[int] = None,
     stimulus_index: Optional[int] = None,
-    name_field: str = 'stimulus_name', index_field: str = 'stimulus_index',
-    start_field: str = 'Start', end_field: str = 'End'
+    name_field: str = 'stimulus_name',
+    index_field: str = 'stimulus_index',
+    start_field: str = 'Start',
+    end_field: str = 'End'
 ) -> Tuple[List[np.ndarray], np.ndarray]:
     '''Obtains time interval surrounding stimulus sweep onsets
 
@@ -69,7 +74,7 @@ def extract_trial_windows(
 
     if num_trials is not None:
         trials = trials.iloc[:num_trials, :]
-    trials = trials.to_dict('record')
+    trials = trials.to_dict('records')
 
     relative_times = np.arange(-pre_stimulus_time,
                                post_stimulus_time,
